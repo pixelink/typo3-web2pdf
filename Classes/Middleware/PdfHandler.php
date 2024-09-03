@@ -69,12 +69,13 @@ class PdfHandler implements MiddlewareInterface
 
         $response = new Response();
         $file = $this->pdfView->renderHtmlOutput($output->getBody(), $this->frontendController->generatePageTitle());
+        $fileName = $GLOBALS['TSFE']->fe_user->user['username'] . '_' . date('dmY');
         $destination = $this->moduleOptions->getPdfDestination() ?? 'attachment';
 
         $response = $response->withHeader('Content-Transfer-Encoding', 'binary');
         $response->getBody()->write(file_get_contents($file));
         $response = $response->withHeader('Content-Type', 'application/pdf');
-        $response = $response->withHeader('Content-Disposition', $destination . '; filename="' . basename($file) . '"');
+        $response = $response->withHeader('Content-Disposition', $destination . '; filename="' . basename($fileName) . '"');
 
         return $response->withStatus(200);
     }
